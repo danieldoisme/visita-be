@@ -1,59 +1,65 @@
 package com.visita.entities;
 
-import java.time.LocalDate;
+import jakarta.persistence.*;
+import lombok.*;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UserEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long userId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Long userId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "role_id", nullable = false)
-	private RoleEntity role;
+    @Column(name = "full_name", nullable = false, length = 255)
+    private String fullName;
 
-	@Column(nullable = false, unique = true)
-	private String userName;
+    @Column(nullable = false, unique = true, length = 100)
+    private String email;
 
-	@Column(nullable = false)
-	private String passWord;
+    @Column(nullable = false, length = 255)
+    private String password;
 
-	private String fullName;
+    @Column(length = 15)
+    private String phone;
 
-	@Column(nullable = false, length = 100)
-	private String email;
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "ENUM('Male','Female','Other')")
+    private Gender gender;
 
-	@Column(unique = true, nullable = false, length = 15)
-	private String phone;
+    private LocalDate dob;
 
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	private Gender gender;
+    @Column(length = 255)
+    private String address;
 
-	private LocalDate createdAt = LocalDate.now();
-	private LocalDate updatedAt = LocalDate.now();
-	private boolean isActive;
-	private LocalDate dob;
+    @Column(name = "is_active")
+    private Boolean isActive;  // BIT(1)
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    // Quan hệ
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<BookingEntity> bookings;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<ReviewEntity> reviews;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<ChatSessionEntity> chatSessions;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<HistoryEntity> histories;
 }

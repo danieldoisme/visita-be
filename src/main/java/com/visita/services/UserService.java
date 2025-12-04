@@ -17,11 +17,9 @@ import com.visita.dto.request.UserCreateRequest;
 import com.visita.dto.request.UserUpdateRequest;
 import com.visita.dto.response.UserResponse;
 import com.visita.entities.Gender;
-import com.visita.entities.RoleEntity;
 import com.visita.entities.UserEntity;
 import com.visita.exceptions.ErrorCode;
 import com.visita.exceptions.WebException;
-import com.visita.repositories.RoleRepository;
 import com.visita.repositories.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
