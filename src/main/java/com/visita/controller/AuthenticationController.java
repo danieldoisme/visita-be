@@ -37,4 +37,18 @@ public class AuthenticationController {
 		var isAuthenticated = authenticationService.introspect(introspectRequest);
 		return ApiResponse.<IntrospectResponse>builder().result(isAuthenticated).build();
 	}
+
+	@PostMapping("/refresh")
+	ApiResponse<AuthenticationResponse> refresh(@RequestBody com.visita.dto.request.RefreshTokenRequest request)
+			throws ParseException, JOSEException {
+		var result = authenticationService.refreshToken(request);
+		return ApiResponse.<AuthenticationResponse>builder().result(result).build();
+	}
+
+	@PostMapping("/outbound/authentication")
+	ApiResponse<AuthenticationResponse> outboundAuthenticate(
+			@RequestBody com.visita.dto.request.ExchangeTokenRequest request) {
+		var result = authenticationService.outboundAuthenticate(request);
+		return ApiResponse.<AuthenticationResponse>builder().result(result).build();
+	}
 }

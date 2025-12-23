@@ -12,14 +12,14 @@ import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice
 @Slf4j
-public class GlobalExceptionHandle {
+public class GlobalExceptionHandler {
 
 	@ExceptionHandler(value = Exception.class)
-	ResponseEntity<ApiResponse<?>> handleRuntimeException(Exception Exception) {
+	ResponseEntity<ApiResponse<?>> handleRuntimeException(Exception exception) {
 		ApiResponse<?> apiResponse = new ApiResponse<>();
-		log.error("Unhandled exception: ", Exception);
-		apiResponse.setCode(ErrorCode.NOT_DEFINE_IN_ERROR_CODE.getCode());
-		apiResponse.setMessage(ErrorCode.NOT_DEFINE_IN_ERROR_CODE.getMessage());
+		log.error("Unhandled exception: ", exception);
+		apiResponse.setCode(ErrorCode.UNKNOWN_ERROR.getCode());
+		apiResponse.setMessage(ErrorCode.UNKNOWN_ERROR.getMessage());
 		return ResponseEntity.badRequest().body(apiResponse);
 	}
 
@@ -49,7 +49,7 @@ public class GlobalExceptionHandle {
 		if (methodArgumentNotValidException.getFieldError() != null) {
 			enumKey = methodArgumentNotValidException.getFieldError().getDefaultMessage();
 		}
-		ErrorCode errorCode = ErrorCode.NOT_DEFINE_IN_ERROR_CODE;
+		ErrorCode errorCode = ErrorCode.UNKNOWN_ERROR;
 		if (enumKey != null && !enumKey.isEmpty()) {
 			try {
 				errorCode = ErrorCode.valueOf(enumKey);

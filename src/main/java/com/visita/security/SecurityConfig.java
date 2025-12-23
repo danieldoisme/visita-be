@@ -22,7 +22,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-	private final String[] PUBLIC_API = { "/users/create", "/auth/login", "/auth/introspect" };
+	private final String[] PUBLIC_API = { "/users/create", "/auth/login", "/auth/introspect", "/auth/refresh",
+			"/auth/outbound/authentication" };
 	@Value("${jwt.secret}")
 	protected String signedKey;
 
