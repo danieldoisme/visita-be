@@ -22,16 +22,16 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-	private final String[] PUBLIC_API = { "/users/create", "/auth/login", "/auth/introspect" };
-
+	private final String[] PUBLIC_API = { "/users/create", "/auth/login", "/auth/introspect", "/auth/refresh",
+			"/auth/outbound/authentication" };
 	@Value("${jwt.secret}")
 	protected String signedKey;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.POST, PUBLIC_API).permitAll()
-				.requestMatchers(HttpMethod.GET, "/users/listUsers").hasAuthority("SCOPE_ADMIN").anyRequest()
-				.authenticated());
+				.requestMatchers("/admins/**").hasAuthority("SCOPE_ADMIN")
+				.anyRequest().authenticated());
 		httpSecurity.oauth2ResourceServer((oauth2) -> oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder()))
 				.authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
 		httpSecurity.csrf(AbstractHttpConfigurer::disable);
