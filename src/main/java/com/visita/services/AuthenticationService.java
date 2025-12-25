@@ -24,8 +24,6 @@ import com.visita.dto.request.AuthenticationRequest;
 import com.visita.dto.request.IntrospectRequest;
 import com.visita.dto.response.AuthenticationResponse;
 import com.visita.dto.response.IntrospectResponse;
-import com.visita.exceptions.ErrorCode;
-import com.visita.exceptions.WebException;
 import com.visita.repositories.AdminRepository;
 import com.visita.repositories.UserRepository;
 

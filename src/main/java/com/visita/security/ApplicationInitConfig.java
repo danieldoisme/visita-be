@@ -29,11 +29,11 @@ public class ApplicationInitConfig {
 	ApplicationRunner applicationRunner(AdminRepository adminRepository) {
 		return args -> {
 			if (adminRepository.findByUsername("admin").isEmpty()) {
-				AdminEntity adminEntity = AdminEntity.builder().username("admin")
-						.password(passwordEncoder.encode("admin")) // password: admin
+				AdminEntity adminEntity = AdminEntity.builder().username("admin@visita.com")
+						.password(passwordEncoder.encode("admin123")) // password: admin
 						.fullName("Administrator").email("admin@example.com").createdAt(LocalDateTime.now()).build();
 				adminRepository.save(adminEntity);
-				log.warn("Admin user created with username: admin and password: admin");
+				log.warn("Admin user created with username: admin@visita.com and password: admin123");
 			}
 		};
 	}
