@@ -29,7 +29,7 @@ public class ChatSessionEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "staff_id")
-	private StaffEntity staffEntity; // Nhân viên hỗ trợ (có thể null)
+	private StaffEntity staff;
 
 	@Enumerated(EnumType.STRING)
 	@Column(columnDefinition = "ENUM('OPEN','CLOSED')")

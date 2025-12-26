@@ -23,14 +23,14 @@ public class UserEntity {
 	@Column(name = "user_id")
 	private String userId;
 
-	@Column(name = "full_name", nullable = false)
-	private String fullName;
-
 	@Column(nullable = false, unique = true, length = 100)
 	private String email;
 
 	@Column(nullable = false)
 	private String password;
+    
+    @Column(name = "full_name", nullable = false)
+    private String fullName;
 
 	@Column(length = 15)
 	private String phone;
