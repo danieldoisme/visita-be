@@ -23,6 +23,9 @@ public class TourEntity {
 	@Column(name = "tour_id")
 	private String tourId;
 
+	@Version
+	private Long version;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "staff_id")
     private StaffEntity staffEntity;
@@ -71,4 +74,7 @@ public class TourEntity {
 
 	@OneToMany(mappedBy = "tour", fetch = FetchType.LAZY)
 	private List<HistoryEntity> histories;
+
+	@OneToMany(mappedBy = "tour", fetch = FetchType.LAZY)
+	private List<FavoriteEntity> favorites;
 }

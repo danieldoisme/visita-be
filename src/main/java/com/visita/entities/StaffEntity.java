@@ -37,7 +37,7 @@ public class StaffEntity {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "staffEntity", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY)
     private List<ChatSessionEntity> chatSessions;
 
     @PrePersist

@@ -65,6 +65,9 @@ public class UserEntity {
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	private List<HistoryEntity> histories;
 
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	private List<FavoriteEntity> favorites;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
