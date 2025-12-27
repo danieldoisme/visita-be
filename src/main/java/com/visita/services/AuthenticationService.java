@@ -151,13 +151,11 @@ public class AuthenticationService {
 	public AuthenticationResponse refreshToken(com.visita.dto.request.RefreshTokenRequest request)
 			throws JOSEException, ParseException {
 		// 1. Verify signature of the passed Refresh Token
-		// We use verifyToken with isRefresh=true to check signature and expiry BUT NOT
-		// blacklist (invalidated_tokens)
-		// because we are managing refresh tokens in our new table.
 		var signedJWT = verifyToken(request.getToken(), true);
+		var jti = signedJWT.getJWTClaimsSet().getJWTID();
 
 		// 2. Check if exists in DB
-		var storedToken = refreshTokenRepository.findByToken(request.getToken())
+		var storedToken = refreshTokenRepository.findById(jti)
 				.orElseThrow(() -> new WebException(ErrorCode.UNAUTHENTICATED));
 
 		// 3. Check Expiry (Double check, although verifyToken checks JWT exp)
