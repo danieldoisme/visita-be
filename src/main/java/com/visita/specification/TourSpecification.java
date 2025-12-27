@@ -1,0 +1,103 @@
+package com.visita.specification;
+
+import com.visita.entities.ReviewEntity;
+import com.visita.entities.TourEntity;
+import com.visita.enums.TourCategory;
+import jakarta.persistence.criteria.*;
+import org.springframework.data.jpa.domain.Specification;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+public class TourSpecification {
+
+    public static Specification<TourEntity> filterTours(
+            String title,
+            String destination, // New: Filter by destination (like "Ha Long")
+            TourCategory category,
+            BigDecimal minPrice,
+            BigDecimal maxPrice,
+            LocalDate startDateFrom,
+            LocalDate endDateTo, // Limits the START date (tours MUST start before this date)
+            LocalDate endDateLimit, // New: Limits the END date (tours MUST finish before this date)
+            Double minRating,
+            Integer minCapacity // New: Minimum available capacity (simple check against total capacity for now)
+    ) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // Always filter by isActive = true
+            predicates.add(criteriaBuilder.isTrue(root.get("isActive")));
+
+            // Title (Partial match, case insensitive)
+            if (title != null && !title.isEmpty()) {
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("title")),
+                        "%" + title.toLowerCase() + "%"));
+            }
+
+            // Destination (Partial match, case insensitive)
+            if (destination != null && !destination.isEmpty()) {
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("destination")),
+                        "%" + destination.toLowerCase() + "%"));
+            }
+
+            // Category
+            if (category != null) {
+                predicates.add(criteriaBuilder.equal(root.get("category"), category));
+            }
+
+            // Price Range (priceAdult)
+            if (minPrice != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("priceAdult"), minPrice));
+            }
+            if (maxPrice != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("priceAdult"), maxPrice));
+            }
+
+            // Date Range
+            // If user selects a date range, we usually want to find tours that start ON or
+            // AFTER the user's start date
+            // and optionally end BEFORE the user's end date.
+            // Or, simply overlap.
+            // Let's assume standard "Search for tours occuring in this timeframe".
+            // Implementation: Tour Start Date >= Input Start Date (if provided)
+            // Tour Start Date <= Input End Date (if provided) - effectively limiting start
+            // window
+            // The user said "thời gian" (Time). Usually means Start Date.
+            if (startDateFrom != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("startDate"), startDateFrom));
+            }
+            if (endDateTo != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("startDate"), endDateTo));
+            }
+            // End Date Limit (Tour must end before or on this date)
+            if (endDateLimit != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("endDate"), endDateLimit));
+            }
+
+            // Min Capacity (Check if tour has at least X total capacity)
+            // Note: This does not check LIVE availability (bookings), just total capacity.
+            if (minCapacity != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("capacity"), minCapacity));
+            }
+
+            // Rating
+            if (minRating != null) {
+                // Subquery to calculate average rating
+                Subquery<Double> avgRatingSubquery = query.subquery(Double.class);
+                Root<ReviewEntity> reviewRoot = avgRatingSubquery.from(ReviewEntity.class);
+                avgRatingSubquery.select(criteriaBuilder.avg(reviewRoot.get("rating").as(Double.class)));
+                avgRatingSubquery.where(criteriaBuilder.equal(reviewRoot.get("tour"), root));
+
+                // We want tours where (avgRating >= minRating)
+                // Note: If no reviews, avg is usually null. We should decide if null rating
+                // counts. Usually not.
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(avgRatingSubquery, minRating));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+}

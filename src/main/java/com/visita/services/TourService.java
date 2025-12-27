@@ -41,6 +41,7 @@ public class TourService {
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
                 .capacity(request.getCapacity())
+                .category(request.getCategory()) // Map category
                 .availability(request.getAvailability() != null ? request.getAvailability() : 1)
                 .build();
 
@@ -66,6 +67,9 @@ public class TourService {
         tour.setStartDate(request.getStartDate());
         tour.setEndDate(request.getEndDate());
         tour.setCapacity(request.getCapacity());
+        if (request.getCategory() != null) {
+            tour.setCategory(request.getCategory());
+        }
         if (request.getAvailability() != null) {
             tour.setAvailability(request.getAvailability());
         }
@@ -85,6 +89,63 @@ public class TourService {
                 .orElseThrow(() -> new WebException(ErrorCode.TOUR_NOT_FOUND));
         tour.setIsActive(isActive);
         tourRepository.save(tour);
+    }
+
+    public org.springframework.data.domain.Page<TourEntity> getAllActiveTours(
+            int page,
+            int size,
+            String title,
+            String destination,
+            com.visita.enums.TourCategory category,
+            java.math.BigDecimal minPrice,
+            java.math.BigDecimal maxPrice,
+            java.time.LocalDate startDateFrom,
+            java.time.LocalDate endDateTo, // Start Date limit
+            java.time.LocalDate endDateLimit, // End Date limit
+            Double minRating,
+            Integer numAdults,
+            Integer numChildren,
+            String sortBy,
+            String sortDirection) {
+
+        // Handle Sorting
+        org.springframework.data.domain.Sort sort = org.springframework.data.domain.Sort.unsorted();
+        if (sortBy != null && !sortBy.isEmpty()) {
+            org.springframework.data.domain.Sort.Direction direction = (sortDirection != null
+                    && sortDirection.equalsIgnoreCase("desc"))
+                            ? org.springframework.data.domain.Sort.Direction.DESC
+                            : org.springframework.data.domain.Sort.Direction.ASC;
+
+            if (sortBy.equalsIgnoreCase("price")) {
+                sort = org.springframework.data.domain.Sort.by(direction, "priceAdult");
+            } else if (sortBy.equalsIgnoreCase("duration")) {
+                sort = org.springframework.data.domain.Sort.by(direction, "duration");
+            } else if (sortBy.equalsIgnoreCase("startDate")) {
+                sort = org.springframework.data.domain.Sort.by(direction, "startDate");
+            }
+        }
+
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size,
+                sort);
+
+        // Calculate minCapacity required
+        Integer minCapacity = null;
+        if (numAdults != null || numChildren != null) {
+            minCapacity = (numAdults != null ? numAdults : 0) + (numChildren != null ? numChildren : 0);
+        }
+
+        // Build Specification
+        org.springframework.data.jpa.domain.Specification<TourEntity> spec = com.visita.specification.TourSpecification
+                .filterTours(
+                        title, destination, category, minPrice, maxPrice, startDateFrom, endDateTo, endDateLimit,
+                        minRating, minCapacity);
+
+        return tourRepository.findAll(spec, pageable);
+    }
+
+    public TourEntity getTourById(String id) {
+        return tourRepository.findById(id)
+                .orElseThrow(() -> new WebException(ErrorCode.TOUR_NOT_FOUND));
     }
 
     public List<TourEntity> getAllTours() {
