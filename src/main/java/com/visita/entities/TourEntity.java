@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@com.fasterxml.jackson.annotation.JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class TourEntity {
 
 	@Id
@@ -25,6 +26,9 @@ public class TourEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "staff_id")
+	@com.fasterxml.jackson.annotation.JsonIgnoreProperties({ "hibernateLazyInitializer", "handler", "password", "email",
+			"phone", "dob", "address", "createdAt", "updatedAt", "roles", "bookings", "reviews", "chatSessions",
+			"histories", "favorites", "isActive" })
 	private UserEntity staff;
 
 	@Column(nullable = false)
@@ -61,6 +65,10 @@ public class TourEntity {
 	@Builder.Default
 	private Boolean isActive = true;
 
+	@Enumerated(EnumType.STRING)
+	@Column(length = 50)
+	private com.visita.enums.TourCategory category;
+
 	@Column
 	private Integer availability; // 1 / 0
 
@@ -76,6 +84,7 @@ public class TourEntity {
 	@OneToMany(mappedBy = "tour", fetch = FetchType.LAZY)
 	private List<HistoryEntity> histories;
 
+	@com.fasterxml.jackson.annotation.JsonIgnore
 	@OneToMany(mappedBy = "tour", fetch = FetchType.LAZY)
 	private List<FavoriteEntity> favorites;
 }

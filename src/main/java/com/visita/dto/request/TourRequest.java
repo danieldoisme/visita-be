@@ -54,5 +54,7 @@ public class TourRequest {
     @Min(value = 1, message = "Capacity must be at least 1")
     Integer capacity;
 
+    private com.visita.enums.TourCategory category;
+
     Integer availability; // 1 for available, 0 for unavailable
 }

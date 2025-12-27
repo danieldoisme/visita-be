@@ -10,12 +10,13 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "favorites", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"user_id", "tour_id"})
+        @UniqueConstraint(columnNames = { "user_id", "tour_id" })
 })
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@com.fasterxml.jackson.annotation.JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class FavoriteEntity {
 
     @Id
@@ -39,4 +40,3 @@ public class FavoriteEntity {
         this.createdAt = LocalDateTime.now();
     }
 }
-

@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@com.fasterxml.jackson.annotation.JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class UserEntity {
 
 	@Id
@@ -27,6 +28,7 @@ public class UserEntity {
 	private String email;
 
 	@Column(nullable = false)
+	@com.fasterxml.jackson.annotation.JsonIgnore
 	private String password;
 
 	@Column(name = "full_name", nullable = false)
@@ -84,6 +86,7 @@ public class UserEntity {
 
 	@lombok.ToString.Exclude
 	@lombok.EqualsAndHashCode.Exclude
+	@com.fasterxml.jackson.annotation.JsonIgnore
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	private List<FavoriteEntity> favorites;
 

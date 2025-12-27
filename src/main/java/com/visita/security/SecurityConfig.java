@@ -31,7 +31,8 @@ public class SecurityConfig {
 	private final String[] PUBLIC_POST_API = { "/users/create", "/auth/login", "/auth/introspect", "/auth/refresh",
 			"/auth/outbound/authentication", "/auth/logout" };
 
-	private final String[] PUBLIC_GET_API = { "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**" };
+	private final String[] PUBLIC_GET_API = { "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**",
+			"/tours/**" };
 	@Value("${jwt.secret}")
 	protected String signedKey;
 
