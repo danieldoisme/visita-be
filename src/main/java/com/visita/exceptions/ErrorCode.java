@@ -28,7 +28,8 @@ public enum ErrorCode {
 	PROMOTION_EXPIRED(1016, "Promotion is expired or not yet started", HttpStatus.BAD_REQUEST),
 	PROMOTION_OUT_OF_STOCK(1017, "Promotion is out of stock", HttpStatus.BAD_REQUEST),
 	PROMOTION_INACTIVE(1018, "Promotion is inactive", HttpStatus.BAD_REQUEST),
-	TOUR_UNAVAILABLE(1019, "Tour is not available", HttpStatus.BAD_REQUEST);
+	TOUR_UNAVAILABLE(1019, "Tour is not available", HttpStatus.BAD_REQUEST),
+	PROMOTION_UNAVAILABLE(1020, "Promotion is unavailable", HttpStatus.BAD_REQUEST);
 
 	private final int code;
 	private final String message;

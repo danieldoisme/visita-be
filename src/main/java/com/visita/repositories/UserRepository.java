@@ -19,4 +19,8 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
 
 	org.springframework.data.domain.Page<UserEntity> findAllByRoles_Name(String role,
 			org.springframework.data.domain.Pageable pageable);
+
+	long countByCreatedAtBetween(java.time.LocalDateTime startDate, java.time.LocalDateTime endDate);
+
+	long countByIsActiveTrue();
 }

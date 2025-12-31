@@ -45,6 +45,7 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.POST, PUBLIC_POST_API).permitAll()
 				.requestMatchers(HttpMethod.GET, PUBLIC_GET_API).permitAll()
 				.requestMatchers("/admins/**").hasRole("ADMIN")
+				.requestMatchers("/staffs/**").hasAnyRole("STAFF", "ADMIN")
 				.anyRequest().authenticated());
 		httpSecurity.oauth2ResourceServer((oauth2) -> oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
 				.jwtAuthenticationConverter(jwtAuthenticationConverter()))

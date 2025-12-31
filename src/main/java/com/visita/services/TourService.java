@@ -160,4 +160,48 @@ public class TourService {
     public List<TourEntity> getAllTours() {
         return tourRepository.findAll();
     }
+
+    public org.springframework.data.domain.Page<com.visita.dto.response.TourResponse> getToursByStaffId(String staffId,
+            int page, int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        return tourRepository.findByStaff_UserId(staffId, pageable).map(this::mapToTourResponse);
+    }
+
+    private com.visita.dto.response.TourResponse mapToTourResponse(TourEntity tour) {
+        List<String> imageUrls = tour.getImages() != null
+                ? tour.getImages().stream().map(com.visita.entities.TourImageEntity::getImageUrl)
+                        .collect(java.util.stream.Collectors.toList())
+                : new java.util.ArrayList<>();
+
+        Double averageRating = 0.0;
+        Long reviewCount = 0L;
+        if (tour.getReviews() != null && !tour.getReviews().isEmpty()) {
+            reviewCount = (long) tour.getReviews().size();
+            double sum = tour.getReviews().stream().mapToInt(com.visita.entities.ReviewEntity::getRating).sum();
+            averageRating = sum / reviewCount;
+        }
+
+        return com.visita.dto.response.TourResponse.builder()
+                .tourId(tour.getTourId())
+                .title(tour.getTitle())
+                .description(tour.getDescription())
+                .itinerary(tour.getItinerary())
+                .priceAdult(tour.getPriceAdult())
+                .priceChild(tour.getPriceChild())
+                .duration(tour.getDuration())
+                .destination(tour.getDestination())
+                .startDate(tour.getStartDate())
+                .endDate(tour.getEndDate())
+                .capacity(tour.getCapacity())
+                .isActive(tour.getIsActive())
+                .category(tour.getCategory())
+                .region(tour.getRegion())
+                .availability(tour.getAvailability())
+                .images(imageUrls)
+                .averageRating(averageRating)
+                .reviewCount(reviewCount)
+                .staffId(tour.getStaff() != null ? tour.getStaff().getUserId() : null)
+                .staffName(tour.getStaff() != null ? tour.getStaff().getFullName() : null)
+                .build();
+    }
 }

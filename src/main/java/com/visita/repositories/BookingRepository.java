@@ -22,4 +22,9 @@ public interface BookingRepository extends JpaRepository<BookingEntity, String> 
 
         boolean existsByUser_UsernameAndTour_TourIdAndStatus(String username, String tourId,
                         com.visita.entities.BookingStatus status);
+
+        long countByBookingDateBetween(java.time.LocalDateTime startDate, java.time.LocalDateTime endDate);
+
+        org.springframework.data.domain.Page<BookingEntity> findByStaff_UserId(String staffId,
+                        org.springframework.data.domain.Pageable pageable);
 }
