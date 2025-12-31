@@ -169,6 +169,98 @@ public class BookingService {
                 .message(message)
                 .build();
     }
+
+    @Transactional
+    public BookingResponse createBookingForUser(com.visita.dto.request.StaffBookingRequest request) {
+        // 1. Get User
+        com.visita.entities.UserEntity user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new WebException(ErrorCode.USER_NOT_FOUND));
+
+        // 2. Validate Tour
+        TourEntity tour = tourRepository.findById(request.getTourId())
+                .orElseThrow(() -> new WebException(ErrorCode.TOUR_NOT_FOUND));
+
+        if (!tour.getIsActive()) {
+            throw new WebException(ErrorCode.TOUR_NOT_FOUND);
+        }
+
+        // 3. Calculate Price
+        int adults = request.getNumAdults();
+        int children = request.getNumChildren() != null ? request.getNumChildren() : 0;
+
+        BigDecimal priceAdult = tour.getPriceAdult();
+        BigDecimal priceChild = tour.getPriceChild();
+
+        BigDecimal originalPrice = priceAdult.multiply(BigDecimal.valueOf(adults))
+                .add(priceChild.multiply(BigDecimal.valueOf(children)));
+
+        // 4. Handle Promotion
+        BigDecimal discountAmount = BigDecimal.ZERO;
+        PromotionEntity promotion = null;
+
+        if (request.getPromotionCode() != null && !request.getPromotionCode().isEmpty()) {
+            promotion = promotionRepository.findByCode(request.getPromotionCode())
+                    .orElseThrow(() -> new WebException(ErrorCode.PROMOTION_NOT_FOUND));
+
+            if (!promotion.getIsActive() || promotion.getQuantity() <= 0) {
+                throw new WebException(ErrorCode.PROMOTION_UNAVAILABLE); // Generic validation
+            }
+            LocalDate now = LocalDate.now();
+            if (now.isBefore(promotion.getStartDate()) || now.isAfter(promotion.getEndDate())) {
+                throw new WebException(ErrorCode.PROMOTION_EXPIRED);
+            }
+
+            if (promotion.getDiscountAmount() != null) {
+                discountAmount = promotion.getDiscountAmount();
+            } else if (promotion.getDiscountPercent() != null) {
+                discountAmount = originalPrice.multiply(promotion.getDiscountPercent())
+                        .divide(BigDecimal.valueOf(100));
+            }
+
+            promotion.setQuantity(promotion.getQuantity() - 1);
+            promotionRepository.save(promotion);
+        }
+
+        BigDecimal finalPrice = originalPrice.subtract(discountAmount);
+        if (finalPrice.compareTo(BigDecimal.ZERO) < 0) {
+            finalPrice = BigDecimal.ZERO;
+        }
+
+        // 5. Create Booking (Status CONFIRMED)
+        BookingEntity booking = BookingEntity.builder()
+                .user(user)
+                .tour(tour)
+                .staff(tour.getStaff())
+                .promotion(promotion)
+                .bookingDate(LocalDateTime.now())
+                .numAdults(adults)
+                .numChildren(children)
+                .totalPrice(finalPrice)
+                .status(BookingStatus.CONFIRMED)
+                .specialRequest(request.getSpecialRequest())
+                .build();
+
+        booking = bookingRepository.save(booking);
+
+        // 6. Create Payment (Method CASH, Status PENDING)
+        PaymentEntity payment = PaymentEntity.builder()
+                .booking(booking)
+                .amount(finalPrice)
+                .paymentMethod(PaymentMethod.CASH.name())
+                .status(PaymentStatus.PENDING)
+                .build();
+
+        paymentRepository.save(payment);
+
+        return BookingResponse.builder()
+                .bookingId(booking.getBookingId())
+                .status(booking.getStatus().name())
+                .originalPrice(originalPrice)
+                .discountAmount(discountAmount)
+                .finalPrice(finalPrice)
+                .message("Booking created successfully for user. Payment method: CASH.")
+                .build();
+    }
     // --- Admin Methods ---
 
     public org.springframework.data.domain.Page<com.visita.dto.response.BookingDetailResponse> getAllBookings(int page,
@@ -302,13 +394,15 @@ public class BookingService {
 
         return com.visita.dto.response.BookingDetailResponse.builder()
                 .bookingId(booking.getBookingId())
-                .userId(booking.getUser().getUserId())
-                .userName(booking.getUser().getFullName())
-                .userEmail(booking.getUser().getEmail())
-                .userPhone(booking.getUser().getPhone())
-                .tourId(booking.getTour().getTourId())
-                .tourTitle(booking.getTour().getTitle())
-                .startDate(booking.getTour().getStartDate().atStartOfDay()) // Approx
+                .userId(booking.getUser() != null ? booking.getUser().getUserId() : null)
+                .userName(booking.getUser() != null ? booking.getUser().getFullName() : null)
+                .userEmail(booking.getUser() != null ? booking.getUser().getEmail() : null)
+                .userPhone(booking.getUser() != null ? booking.getUser().getPhone() : null)
+                .tourId(booking.getTour() != null ? booking.getTour().getTourId() : null)
+                .tourTitle(booking.getTour() != null ? booking.getTour().getTitle() : null)
+                .startDate(booking.getTour() != null && booking.getTour().getStartDate() != null
+                        ? booking.getTour().getStartDate().atStartOfDay()
+                        : null)
                 .bookingDate(booking.getBookingDate())
                 .numAdults(booking.getNumAdults())
                 .numChildren(booking.getNumChildren())
@@ -359,6 +453,15 @@ public class BookingService {
                 org.springframework.data.domain.Sort.by("bookingDate").descending());
 
         return bookingRepository.findByUser_UsernameAndStatus(username, BookingStatus.COMPLETED, pageable)
+                .map(this::mapToDetailResponse);
+    }
+
+    public org.springframework.data.domain.Page<com.visita.dto.response.BookingDetailResponse> getBookingsByStaffId(
+            String staffId, int page, int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size,
+                org.springframework.data.domain.Sort.by("bookingDate").descending());
+
+        return bookingRepository.findByStaff_UserId(staffId, pageable)
                 .map(this::mapToDetailResponse);
     }
 }
