@@ -42,8 +42,8 @@ public class PaymentEntity {
 	@Column(columnDefinition = "ENUM('PENDING','SUCCESS','FAILED','REFUNDED')")
 	private PaymentStatus status;
 
-    @PrePersist
-    protected void onCreate() {
-        this.paymentDate = LocalDateTime.now();
-    }
+	@PrePersist
+	protected void onCreate() {
+		this.paymentDate = LocalDateTime.now();
+	}
 }

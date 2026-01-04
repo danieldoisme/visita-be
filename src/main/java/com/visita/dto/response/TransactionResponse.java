@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 @Builder
 public class TransactionResponse {
+
     private String transactionId;
     private String userId;
     private String userName;

@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 public interface TourImageRepository extends JpaRepository<TourImageEntity, String> {
+
     List<TourImageEntity> findByTour_TourId(String tourId);
 }

@@ -13,6 +13,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ReviewRequest {
+
     @NotBlank(message = "Tour ID is required")
     String tourId;
 

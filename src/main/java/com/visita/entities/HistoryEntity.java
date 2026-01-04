@@ -19,8 +19,8 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "history", indexes = {
-    @Index(name = "idx_history_user", columnList = "user_id"),
-    @Index(name = "idx_history_tour", columnList = "tour_id")
+		@Index(name = "idx_history_user", columnList = "user_id"),
+		@Index(name = "idx_history_tour", columnList = "tour_id")
 })
 @Data
 @NoArgsConstructor

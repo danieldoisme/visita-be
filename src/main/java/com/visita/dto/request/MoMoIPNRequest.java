@@ -10,6 +10,7 @@ import lombok.Builder;
 @AllArgsConstructor
 @Builder
 public class MoMoIPNRequest {
+
     private String partnerCode;
     private String orderId;
     private String requestId;

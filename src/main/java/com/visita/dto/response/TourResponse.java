@@ -13,6 +13,7 @@ import lombok.Data;
 @Data
 @Builder
 public class TourResponse {
+
     private String tourId;
     private String title;
     private String description;

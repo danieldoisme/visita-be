@@ -6,6 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum PaymentStatus {
+
     PENDING("Chờ xử lý"),
     SUCCESS("Thành công"),
     FAILED("Thất bại"),

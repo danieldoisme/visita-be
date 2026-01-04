@@ -9,6 +9,7 @@ import com.visita.entities.TourEntity;
 public interface TourRepository
                 extends JpaRepository<TourEntity, String>,
                 org.springframework.data.jpa.repository.JpaSpecificationExecutor<TourEntity> {
+
         org.springframework.data.domain.Page<TourEntity> findAllByIsActiveTrue(
                         org.springframework.data.domain.Pageable pageable);
 

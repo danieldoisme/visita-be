@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "invalidated_tokens")
 public class InvalidatedToken {
+
     @Id
     private String id; // This will hold the JTI (JWT ID)
     private Date expiryTime;

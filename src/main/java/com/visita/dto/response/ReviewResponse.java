@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 @Builder
 public class ReviewResponse {
+
     private String reviewId;
     private String tourId;
     private String userId;

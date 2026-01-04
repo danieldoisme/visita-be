@@ -1,6 +1,7 @@
 package com.visita.enums;
 
 public enum Region {
+
     NORTH("Miền Bắc"),
     CENTRAL("Miền Trung"),
     SOUTH("Miền Nam");

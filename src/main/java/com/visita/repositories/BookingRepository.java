@@ -7,6 +7,7 @@ import com.visita.entities.BookingEntity;
 
 @Repository
 public interface BookingRepository extends JpaRepository<BookingEntity, String> {
+
         @org.springframework.data.jpa.repository.Query("SELECT b FROM BookingEntity b WHERE " +
                         "LOWER(b.user.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
                         "LOWER(b.tour.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +

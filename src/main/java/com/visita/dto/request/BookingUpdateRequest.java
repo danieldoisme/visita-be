@@ -13,6 +13,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BookingUpdateRequest {
+
     String specialRequest;
     Integer numAdults;
     Integer numChildren;

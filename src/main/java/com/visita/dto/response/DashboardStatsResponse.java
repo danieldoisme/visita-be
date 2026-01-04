@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 @Builder
 public class DashboardStatsResponse {
+
     private BigDecimal totalRevenue;
     private Double revenueGrowth; // Percentage vs last month
 
