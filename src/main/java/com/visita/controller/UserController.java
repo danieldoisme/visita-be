@@ -23,11 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
 
 	private final UserService userService;
-	private final com.visita.services.BookingService bookingService;
 
-	public UserController(UserService userService, com.visita.services.BookingService bookingService) {
+	public UserController(UserService userService) {
 		this.userService = userService;
-		this.bookingService = bookingService;
 	}
 
 	@PostMapping("/create")
@@ -51,21 +49,4 @@ public class UserController {
 		return apiResponse;
 	}
 
-	@GetMapping("/bookings/active")
-	ApiResponse<org.springframework.data.domain.Page<com.visita.dto.response.BookingDetailResponse>> getActiveBookings(
-			@org.springframework.web.bind.annotation.RequestParam(defaultValue = "1") int page,
-			@org.springframework.web.bind.annotation.RequestParam(defaultValue = "5") int size) {
-		ApiResponse<org.springframework.data.domain.Page<com.visita.dto.response.BookingDetailResponse>> apiResponse = new ApiResponse<>();
-		apiResponse.setResult(bookingService.getMyActiveBookings(page - 1, size));
-		return apiResponse;
-	}
-
-	@GetMapping("/bookings/history")
-	ApiResponse<org.springframework.data.domain.Page<com.visita.dto.response.BookingDetailResponse>> getCompletedBookings(
-			@org.springframework.web.bind.annotation.RequestParam(defaultValue = "1") int page,
-			@org.springframework.web.bind.annotation.RequestParam(defaultValue = "5") int size) {
-		ApiResponse<org.springframework.data.domain.Page<com.visita.dto.response.BookingDetailResponse>> apiResponse = new ApiResponse<>();
-		apiResponse.setResult(bookingService.getMyCompletedBookings(page - 1, size));
-		return apiResponse;
-	}
 }
