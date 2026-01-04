@@ -75,10 +75,7 @@ public class BookingService {
      */
     private BookingResponse doCreateBooking(BookingRequest request) {
         // 1. Get Current User
-        var context = org.springframework.security.core.context.SecurityContextHolder.getContext();
-        String username = context.getAuthentication().getName();
-        com.visita.entities.UserEntity user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new WebException(ErrorCode.USER_NOT_FOUND));
+        com.visita.entities.UserEntity user = getCurrentUser();
 
         // 2. Validate Tour
         TourEntity tour = tourRepository.findById(request.getTourId())
@@ -491,23 +488,21 @@ public class BookingService {
 
     public org.springframework.data.domain.Page<com.visita.dto.response.BookingDetailResponse> getMyActiveBookings(
             int page, int size) {
-        String username = org.springframework.security.core.context.SecurityContextHolder.getContext()
-                .getAuthentication().getName();
+        com.visita.entities.UserEntity user = getCurrentUser();
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size,
                 org.springframework.data.domain.Sort.by("bookingDate").descending());
 
-        return bookingRepository.findByUser_UsernameAndStatusNot(username, BookingStatus.COMPLETED, pageable)
+        return bookingRepository.findByUserAndStatusNot(user, BookingStatus.COMPLETED, pageable)
                 .map(this::mapToDetailResponse);
     }
 
     public org.springframework.data.domain.Page<com.visita.dto.response.BookingDetailResponse> getMyCompletedBookings(
             int page, int size) {
-        String username = org.springframework.security.core.context.SecurityContextHolder.getContext()
-                .getAuthentication().getName();
+        com.visita.entities.UserEntity user = getCurrentUser();
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size,
                 org.springframework.data.domain.Sort.by("bookingDate").descending());
 
-        return bookingRepository.findByUser_UsernameAndStatus(username, BookingStatus.COMPLETED, pageable)
+        return bookingRepository.findByUserAndStatus(user, BookingStatus.COMPLETED, pageable)
                 .map(this::mapToDetailResponse);
     }
 
@@ -518,5 +513,13 @@ public class BookingService {
 
         return bookingRepository.findByStaff_UserId(staffId, pageable)
                 .map(this::mapToDetailResponse);
+    }
+
+    private com.visita.entities.UserEntity getCurrentUser() {
+        var context = org.springframework.security.core.context.SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        return userRepository.findByUsername(name)
+                .or(() -> userRepository.findByEmail(name))
+                .orElseThrow(() -> new WebException(ErrorCode.USER_NOT_FOUND));
     }
 }

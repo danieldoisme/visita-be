@@ -15,10 +15,10 @@ public interface BookingRepository extends JpaRepository<BookingEntity, String> 
         org.springframework.data.domain.Page<BookingEntity> searchBookings(String keyword,
                         org.springframework.data.domain.Pageable pageable);
 
-        org.springframework.data.domain.Page<BookingEntity> findByUser_UsernameAndStatusNot(String username,
+        org.springframework.data.domain.Page<BookingEntity> findByUserAndStatusNot(com.visita.entities.UserEntity user,
                         com.visita.entities.BookingStatus status, org.springframework.data.domain.Pageable pageable);
 
-        org.springframework.data.domain.Page<BookingEntity> findByUser_UsernameAndStatus(String username,
+        org.springframework.data.domain.Page<BookingEntity> findByUserAndStatus(com.visita.entities.UserEntity user,
                         com.visita.entities.BookingStatus status, org.springframework.data.domain.Pageable pageable);
 
         boolean existsByUser_UsernameAndTour_TourIdAndStatus(String username, String tourId,
