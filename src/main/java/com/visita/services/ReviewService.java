@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.visita.dto.request.ReviewRequest;
 import com.visita.dto.response.ReviewResponse;
 import com.visita.entities.BookingStatus;
+import com.visita.entities.BookingEntity;
 import com.visita.entities.ReviewEntity;
 import com.visita.entities.TourEntity;
 import com.visita.entities.UserEntity;
@@ -17,7 +18,6 @@ import com.visita.exceptions.ErrorCode;
 import com.visita.exceptions.WebException;
 import com.visita.repositories.BookingRepository;
 import com.visita.repositories.ReviewRepository;
-import com.visita.repositories.TourRepository;
 import com.visita.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,6 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final BookingRepository bookingRepository;
-    private final TourRepository tourRepository;
     private final UserRepository userRepository;
 
     @Transactional
@@ -37,25 +36,31 @@ public class ReviewService {
         UserEntity user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new WebException(ErrorCode.USER_NOT_FOUND));
 
-        TourEntity tour = tourRepository.findById(request.getTourId())
-                .orElseThrow(() -> new WebException(ErrorCode.TOUR_NOT_FOUND));
+        // 1. Look up the booking
+        BookingEntity booking = bookingRepository.findById(request.getBookingId())
+                .orElseThrow(() -> new WebException(ErrorCode.BOOKING_NOT_FOUND));
 
-        // 1. Check if User has gone on the Tour (Status = CONFIRMED)
-        boolean hasConfirmedBooking = bookingRepository.existsByUser_UsernameAndTour_TourIdAndStatus(
-                username, request.getTourId(), BookingStatus.CONFIRMED);
-
-        if (!hasConfirmedBooking) {
-            throw new RuntimeException("You can only review tours you have booked and are CONFIRMED.");
+        // 2. Validate booking belongs to the current user
+        if (!booking.getUser().getUsername().equals(username)) {
+            throw new RuntimeException("You can only review your own bookings.");
         }
 
-        // 2. Prevent Duplicate Reviews
-        if (reviewRepository.existsByUser_UserIdAndTour_TourId(user.getUserId(), request.getTourId())) {
-            throw new RuntimeException("You have already reviewed this tour.");
+        // 3. Validate booking status is COMPLETED
+        if (booking.getStatus() != BookingStatus.COMPLETED) {
+            throw new RuntimeException("You can only review completed bookings.");
         }
+
+        // 4. Prevent duplicate reviews for the same booking
+        if (reviewRepository.existsByBooking_BookingId(request.getBookingId())) {
+            throw new RuntimeException("You have already reviewed this booking.");
+        }
+
+        TourEntity tour = booking.getTour();
 
         ReviewEntity review = ReviewEntity.builder()
                 .user(user)
                 .tour(tour)
+                .booking(booking)
                 .rating(request.getRating())
                 .comment(request.getComment())
                 .build();
@@ -93,6 +98,7 @@ public class ReviewService {
     private ReviewResponse mapToResponse(ReviewEntity review) {
         return ReviewResponse.builder()
                 .reviewId(review.getReviewId())
+                .bookingId(review.getBooking() != null ? review.getBooking().getBookingId() : null)
                 .tourId(review.getTour().getTourId())
                 .userId(review.getUser().getUserId())
                 .userName(review.getUser().getFullName())

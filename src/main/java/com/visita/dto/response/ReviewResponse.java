@@ -10,6 +10,7 @@ import lombok.Data;
 public class ReviewResponse {
 
     private String reviewId;
+    private String bookingId;
     private String tourId;
     private String userId;
     private String userName;

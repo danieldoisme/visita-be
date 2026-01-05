@@ -37,7 +37,8 @@ public enum ErrorCode {
 	PROMOTION_INACTIVE(1017, "Promotion is inactive", HttpStatus.BAD_REQUEST),
 	TOUR_UNAVAILABLE(1018, "Tour is not available", HttpStatus.BAD_REQUEST),
 	PROMOTION_UNAVAILABLE(1019, "Promotion is unavailable", HttpStatus.BAD_REQUEST),
-	CONCURRENT_UPDATE(1020, "Data was modified by another user. Please try again.", HttpStatus.CONFLICT);
+	CONCURRENT_UPDATE(1020, "Data was modified by another user. Please try again.", HttpStatus.CONFLICT),
+	BOOKING_NOT_FOUND(1021, "Booking not found", HttpStatus.NOT_FOUND);
 
 	private final int code;
 	private final String message;

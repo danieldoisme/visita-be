@@ -14,6 +14,9 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ReviewRequest {
 
+    @NotBlank(message = "Booking ID is required")
+    String bookingId;
+
     @NotBlank(message = "Tour ID is required")
     String tourId;
 

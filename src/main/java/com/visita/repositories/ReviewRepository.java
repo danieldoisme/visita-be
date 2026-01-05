@@ -17,4 +17,6 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, String> {
                         org.springframework.data.domain.Pageable pageable);
 
         boolean existsByUser_UserIdAndTour_TourId(String userId, String tourId);
+
+        boolean existsByBooking_BookingId(String bookingId);
 }

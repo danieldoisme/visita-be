@@ -2,7 +2,18 @@ package com.visita.entities;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,6 +41,11 @@ public class ReviewEntity {
 	@JoinColumn(name = "user_id")
 	@com.fasterxml.jackson.annotation.JsonBackReference("user-reviews")
 	private UserEntity user;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "booking_id", unique = true)
+	@com.fasterxml.jackson.annotation.JsonBackReference("booking-review")
+	private BookingEntity booking;
 
 	@jakarta.validation.constraints.Min(value = 1, message = "Rating must be at least 1")
 	@jakarta.validation.constraints.Max(value = 5, message = "Rating must be at most 5")
