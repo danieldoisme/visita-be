@@ -32,7 +32,7 @@ public class SecurityConfig {
 			"/auth/outbound/authentication", "/auth/logout", "/api/payment/ipn-momo" };
 
 	private final String[] PUBLIC_GET_API = { "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**",
-			"/tours/**" };
+			"/tours/**", "/reviews/tour/**" };
 	@Value("${jwt.secret}")
 	protected String signedKey;
 
