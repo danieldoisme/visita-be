@@ -78,4 +78,65 @@ public class PromotionService {
     public List<PromotionEntity> getAllPromotions() {
         return promotionRepository.findAll();
     }
+
+    public com.visita.dto.response.PromoValidationResponse validatePromoCode(String code) {
+        java.util.Optional<PromotionEntity> optionalPromo = promotionRepository.findByCode(code);
+
+        if (optionalPromo.isEmpty()) {
+            return com.visita.dto.response.PromoValidationResponse.builder()
+                    .valid(false)
+                    .message("Promotion code not found")
+                    .build();
+        }
+
+        PromotionEntity promo = optionalPromo.get();
+
+        if (!promo.getIsActive()) {
+            return com.visita.dto.response.PromoValidationResponse.builder()
+                    .valid(false)
+                    .message("Promotion is inactive")
+                    .build();
+        }
+
+        java.time.LocalDate today = java.time.LocalDate.now();
+        if (promo.getStartDate() != null && today.isBefore(promo.getStartDate())) {
+            return com.visita.dto.response.PromoValidationResponse.builder()
+                    .valid(false)
+                    .message("Promotion has not started yet")
+                    .build();
+        }
+
+        if (promo.getEndDate() != null && today.isAfter(promo.getEndDate())) {
+            return com.visita.dto.response.PromoValidationResponse.builder()
+                    .valid(false)
+                    .message("Promotion has expired")
+                    .build();
+        }
+
+        if (promo.getQuantity() != null && promo.getQuantity() <= 0) {
+            return com.visita.dto.response.PromoValidationResponse.builder()
+                    .valid(false)
+                    .message("Promotion is out of stock")
+                    .build();
+        }
+
+        String discountType;
+        java.math.BigDecimal discountValue;
+
+        if (promo.getDiscountPercent() != null && promo.getDiscountPercent().compareTo(java.math.BigDecimal.ZERO) > 0) {
+            discountType = "PERCENT";
+            discountValue = promo.getDiscountPercent();
+        } else {
+            discountType = "AMOUNT";
+            discountValue = promo.getDiscountAmount();
+        }
+
+        return com.visita.dto.response.PromoValidationResponse.builder()
+                .valid(true)
+                .discountType(discountType)
+                .discountValue(discountValue)
+                .description(promo.getDescription())
+                .message("Promotion is valid")
+                .build();
+    }
 }
