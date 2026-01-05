@@ -26,10 +26,12 @@ public class FavoriteEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonBackReference("user-favorites")
     private UserEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tour_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonBackReference("tour-favorites")
     private TourEntity tour;
 
     @Column(name = "created_at")

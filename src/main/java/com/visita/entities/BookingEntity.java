@@ -37,18 +37,22 @@ public class BookingEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
+	@com.fasterxml.jackson.annotation.JsonBackReference("user-bookings")
 	private UserEntity user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "tour_id")
+	@com.fasterxml.jackson.annotation.JsonBackReference("tour-bookings")
 	private TourEntity tour;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "staff_id")
+	@com.fasterxml.jackson.annotation.JsonBackReference("staff-bookings")
 	private UserEntity staff;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "promotion_id")
+	@com.fasterxml.jackson.annotation.JsonBackReference("promotion-bookings")
 	private PromotionEntity promotion;
 
 	@Column(name = "booking_date")
@@ -71,8 +75,10 @@ public class BookingEntity {
 	private String specialRequest;
 
 	@OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@com.fasterxml.jackson.annotation.JsonManagedReference("booking-invoices")
 	private List<InvoiceEntity> invoices;
 
 	@OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@com.fasterxml.jackson.annotation.JsonManagedReference("booking-payments")
 	private List<PaymentEntity> payments;
 }

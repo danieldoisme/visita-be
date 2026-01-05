@@ -67,21 +67,25 @@ public class UserEntity {
 	@lombok.ToString.Exclude
 	@lombok.EqualsAndHashCode.Exclude
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	@com.fasterxml.jackson.annotation.JsonManagedReference("user-bookings")
 	private List<BookingEntity> bookings;
 
 	@lombok.ToString.Exclude
 	@lombok.EqualsAndHashCode.Exclude
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	@com.fasterxml.jackson.annotation.JsonManagedReference("user-reviews")
 	private List<ReviewEntity> reviews;
 
 	@lombok.ToString.Exclude
 	@lombok.EqualsAndHashCode.Exclude
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	@com.fasterxml.jackson.annotation.JsonManagedReference("user-chatSessions")
 	private List<ChatSessionEntity> chatSessions;
 
 	@lombok.ToString.Exclude
 	@lombok.EqualsAndHashCode.Exclude
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	@com.fasterxml.jackson.annotation.JsonManagedReference("user-histories")
 	private List<HistoryEntity> histories;
 
 	@lombok.ToString.Exclude

@@ -24,10 +24,12 @@ public class ChatSessionEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
+	@com.fasterxml.jackson.annotation.JsonBackReference("user-chatSessions")
 	private UserEntity user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "staff_id")
+	@com.fasterxml.jackson.annotation.JsonBackReference("staff-chatSessions")
 	private UserEntity staff; // NHAN VIEN HO TRO (nullable)
 
 	@Enumerated(EnumType.STRING)
@@ -41,6 +43,7 @@ public class ChatSessionEntity {
 	private LocalDateTime updatedAt;
 
 	@OneToMany(mappedBy = "session", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@com.fasterxml.jackson.annotation.JsonManagedReference("session-messages")
 	private List<ChatMessageEntity> messages;
 
 	@PrePersist

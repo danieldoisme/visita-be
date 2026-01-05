@@ -35,10 +35,12 @@ public class HistoryEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
+	@com.fasterxml.jackson.annotation.JsonBackReference("user-histories")
 	private UserEntity user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "tour_id")
+	@com.fasterxml.jackson.annotation.JsonBackReference("tour-histories")
 	private TourEntity tour;
 
 	@Column(name = "action_type", length = 100)

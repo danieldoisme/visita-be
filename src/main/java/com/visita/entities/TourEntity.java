@@ -26,9 +26,7 @@ public class TourEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "staff_id")
-	@com.fasterxml.jackson.annotation.JsonIgnoreProperties({ "hibernateLazyInitializer", "handler", "password", "email",
-			"phone", "dob", "address", "createdAt", "updatedAt", "roles", "bookings", "reviews", "chatSessions",
-			"histories", "favorites", "isActive" })
+	@com.fasterxml.jackson.annotation.JsonBackReference("staff-tours")
 	private UserEntity staff;
 
 	@Column(nullable = false)
@@ -77,15 +75,19 @@ public class TourEntity {
 	private Integer availability; // 1 / 0
 
 	@OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@com.fasterxml.jackson.annotation.JsonManagedReference("tour-images")
 	private List<TourImageEntity> images;
 
 	@OneToMany(mappedBy = "tour", fetch = FetchType.LAZY)
+	@com.fasterxml.jackson.annotation.JsonManagedReference("tour-bookings")
 	private List<BookingEntity> bookings;
 
 	@OneToMany(mappedBy = "tour", fetch = FetchType.LAZY)
+	@com.fasterxml.jackson.annotation.JsonManagedReference("tour-reviews")
 	private List<ReviewEntity> reviews;
 
 	@OneToMany(mappedBy = "tour", fetch = FetchType.LAZY)
+	@com.fasterxml.jackson.annotation.JsonManagedReference("tour-histories")
 	private List<HistoryEntity> histories;
 
 	@com.fasterxml.jackson.annotation.JsonIgnore

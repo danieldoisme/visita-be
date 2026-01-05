@@ -23,10 +23,12 @@ public class ReviewEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "tour_id")
+	@com.fasterxml.jackson.annotation.JsonBackReference("tour-reviews")
 	private TourEntity tour;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
+	@com.fasterxml.jackson.annotation.JsonBackReference("user-reviews")
 	private UserEntity user;
 
 	private Integer rating; // 1–5

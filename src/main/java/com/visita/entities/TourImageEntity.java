@@ -29,7 +29,7 @@ public class TourImageEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "tour_id")
-	@com.fasterxml.jackson.annotation.JsonIgnore
+	@com.fasterxml.jackson.annotation.JsonBackReference("tour-images")
 	private TourEntity tour;
 
 	@Column(name = "image_url", nullable = false, length = 500)

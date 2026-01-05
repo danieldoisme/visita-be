@@ -24,6 +24,7 @@ public class InvoiceEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "booking_id")
+	@com.fasterxml.jackson.annotation.JsonBackReference("booking-invoices")
 	private BookingEntity booking;
 
 	@Column(nullable = false, precision = 15, scale = 2)

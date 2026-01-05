@@ -23,6 +23,7 @@ public class ChatMessageEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "session_id")
+	@com.fasterxml.jackson.annotation.JsonBackReference("session-messages")
 	private ChatSessionEntity session;
 
 	@Lob

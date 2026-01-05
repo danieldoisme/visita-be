@@ -48,6 +48,7 @@ public class PromotionEntity {
 	private Boolean isActive = true;
 
 	@OneToMany(mappedBy = "promotion", fetch = FetchType.LAZY)
+	@com.fasterxml.jackson.annotation.JsonManagedReference("promotion-bookings")
 	private List<BookingEntity> bookings;
 
 	@Version
