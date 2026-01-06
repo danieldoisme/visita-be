@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from config import Config
 import pymysql
 import pandas as pd
@@ -7,6 +8,7 @@ from sklearn.metrics.pairwise import linear_kernel
 import traceback
 
 app = Flask(__name__)
+CORS(app)
 
 # Global variables to store the model in memory
 tfidf_matrix = None
@@ -232,4 +234,4 @@ def recommend_user():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(port=5050, debug=True)
