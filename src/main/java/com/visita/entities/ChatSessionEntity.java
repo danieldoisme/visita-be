@@ -23,9 +23,9 @@ public class ChatSessionEntity {
 	private String sessionId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", nullable = false)
+	@JoinColumn(name = "user_id")
 	@com.fasterxml.jackson.annotation.JsonBackReference("user-chatSessions")
-	private UserEntity user;
+	private UserEntity user; // KHACH HANG (nullable for guest)
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "staff_id")

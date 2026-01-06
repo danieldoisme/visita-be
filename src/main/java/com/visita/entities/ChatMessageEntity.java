@@ -26,8 +26,7 @@ public class ChatMessageEntity {
 	@com.fasterxml.jackson.annotation.JsonBackReference("session-messages")
 	private ChatSessionEntity session;
 
-	@Lob
-	@Column(nullable = false)
+	@Column(nullable = false, columnDefinition = "TEXT")
 	private String content;
 
 	@Column(name = "is_staff")
